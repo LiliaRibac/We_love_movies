@@ -2,24 +2,20 @@ const { move } = require('./movies.router');
 const moviesService = require('./movies.service');
 
 function list(req, res, next) {
-  moviesService
-    .list()
-    .then((data) => res.json({ data }))
-    .catch(next);
+  if (req.query.is_showing === 'true') {
+    moviesService
+      .list(true)
+      .then((data) => res.json({ data }))
+      .catch(next);
+  } else {
+    moviesService
+      .list()
+      .then((data) => res.json({ data }))
+      .catch(next);
+  }
 }
 
 async function movieExists(req, res, next) {
-  //   moviesService
-  //     .read(req.params.movieId)
-  //     .then((foundMovie) => {
-  //       if (foundMovie) {
-  //         res.locals.movie = foundMovie;
-  //         return next();
-  //       }
-  //       next({ status: 404, message: `Movie cannot be found.` });
-  //     })
-  //     .catch(next);
-
   const { movieId } = req.params;
   const foundMovies = await moviesService.read(movieId);
 
