@@ -18,18 +18,27 @@ function list(req, res, next) {
 async function movieExists(req, res, next) {
   const { movieId } = req.params;
   const foundMovies = await moviesService.read(movieId);
-
   if (foundMovies) {
     res.locals.movie = foundMovies;
-    return next;
+    return next();
   }
-  next({ status: 404, message: `Movie id is not found: ${movieId}` });
+  return next({ status: 404, message: `Movie id is not found: ${movieId}` });
 }
 
-function read(req, res) {
+async function read(req, res) {
   res.json({ data: res.locals.movie });
 }
+
+async function readTheatersMovies(req, res, next) {
+  const data = await moviesService.listTheatersMovies(
+    Number(req.params.movieId)
+  );
+  console.log(data, 'data');
+  res.json({ data });
+}
+
 module.exports = {
   list,
   read: [movieExists, read],
+  readTheatersMovies,
 };

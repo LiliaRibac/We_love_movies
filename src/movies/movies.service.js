@@ -22,9 +22,22 @@ function list(isShowing) {
 }
 
 function read(movieId) {
+  console.log(movieId);
   return knex('movies').select('*').where({ movie_id: movieId }).first();
+}
+
+function listTheatersMovies(movieId) {
+  return knex('theaters')
+    .join(
+      'movies_theaters',
+      'movies_theaters.theater_id',
+      'theaters.theater_id'
+    )
+    .where('movies_theaters.movie_id', movieId)
+    .select('*');
 }
 module.exports = {
   list,
   read,
+  listTheatersMovies,
 };
