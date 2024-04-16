@@ -37,8 +37,16 @@ async function readTheatersMovies(req, res, next) {
   res.json({ data });
 }
 
+async function readReviewsMovies(req, res, next) {
+  const reviews = await moviesService.listTheatersReviews(
+    Number(req.params.movieId)
+  );
+  console.log(reviews, 'rev');
+  res.json({ data: reviews });
+}
 module.exports = {
   list,
   read: [movieExists, read],
   readTheatersMovies,
+  readReviewsMovies,
 };
