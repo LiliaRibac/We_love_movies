@@ -15,7 +15,7 @@ async function reviewsExists(req, res, next) {
 
 async function destroy(req, res) {
   const reviewId = req.params.reviewId;
-  await service.delete(reviewId);
+  await reviewsService.delete(reviewId);
   res.sendStatus(204);
 }
 
