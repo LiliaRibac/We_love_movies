@@ -1,22 +1,21 @@
 const knex = require('../db/connection');
 
+const mapProperties = require('../utils/map-properties');
+
+const addCriticDetails = mapProperties({
+  critic_id: 'critic.critic_id',
+  preferred_name: 'critic.preferred_name',
+  surname: 'critic.surname',
+  organization_name: 'critic.organization_name',
+});
+
 function list(isShowing) {
   if (isShowing) {
-    return (
-      knex('movies')
-        .join('movies_theaters', 'movies.movie_id', 'movies_theaters.movie_id')
-        .select('movies. *')
-        //     .select(
-        //           'movies.movie_id',
-        //           'movies.title',
-        //           'movies.runtime_in_minutes',
-        //           'movies.rating',
-        //           'movies.description',
-        //           'movies.image_url'
-        //         )
-        .where({ is_showing: true })
-        .groupBy('movies.movie_id')
-    );
+    return knex('movies')
+      .join('movies_theaters', 'movies.movie_id', 'movies_theaters.movie_id')
+      .select('movies. *')
+      .where({ is_showing: true })
+      .groupBy('movies.movie_id');
   }
   return knex('movies').select('*');
 }
@@ -37,17 +36,21 @@ function listTheatersMovies(movieId) {
     .select('*');
 }
 function listTheatersReviews(movieId) {
-  return knex('reviews')
-    .join('critics', 'critics.critic_id', 'reviews.critic_id')
-    .select(
-      'reviews.*',
-      'critics.critic_id',
-      'critics.preferred_name',
-      'critics.surname',
-      'critics.organization_name'
-    )
-    .where('reviews.movie_id', movieId);
+  return knex('movies as m')
+    .join('reviews as r', 'r.movie_id', 'm.movie_id')
+    .join('critics as c', 'c.critic_id', 'r.critic_id')
+    .select('*')
+    .where({ 'r.movie_id': movieId })
+    .then((reviews) => {
+      const reviewsCriticDetails = [];
+      reviews.forEach((review) => {
+        const addedCritic = addCriticDetails(review);
+        reviewsCriticDetails.push(addedCritic);
+      });
+      return reviewsCriticDetails;
+    });
 }
+
 module.exports = {
   list,
   read,
