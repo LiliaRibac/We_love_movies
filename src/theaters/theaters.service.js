@@ -12,15 +12,13 @@ function list() {
     .join('movies', 'movies_theaters.movie_id', 'movies.movie_id')
     .then(
       reduceProperties('theater_id', {
-        movie_id: 'movies.movie_id',
-        title: 'movies.title',
-        runtime_in_minutes: 'movies.runtime_in_minutes',
-        rating: 'movies.rating',
-        description: 'movies.description',
-        image_url: 'movies.image_url',
-        created_at: 'movies.created_at',
-        updated_at: 'movies.updated_at',
-        is_showing: 'movies_theaters.is_showing',
+        movie_id: ['movies', null, 'movie_id'],
+        title: ['movies', null, 'title'],
+        runtime_in_minutes: ['movies', null, 'runtime_in_minutes'],
+        rating: ['movies', null, 'rating'],
+        description: ['movies', null, 'description'],
+        image_url: ['movies', null, 'image_url'],
+        is_showing: ['movies', null, 'is_showing'],
       })
     );
 }
